@@ -43,8 +43,12 @@ The column text is
   - **Target**: ```Page <x>```
   - **Link Text**: ```&EDIT_LINK.``` (see [^3] and [^4])
 
+#### Suppress Message After Modal Dialog Create
+The message can be styled (I didn't figure out how to suppress it completely) via a theme JS API.[^5]
+
 # Sources
 [^1]: https://forums.oracle.com/ords/apexds/post/how-to-open-modal-dialog-page-from-hyperlink-6555
 [^2]: https://docs.oracle.com/en/database/oracle/apex/22.1/aeapi/GET_URL-Function.html
 [^3]: https://forums.oracle.com/ords/apexds/post/how-to-make-link-text-conditional-6681
 [^4]: https://docs.oracle.com/en/database/oracle/apex/24.1/htmdb/about-using-substitution-strings.html#GUID-C47D5D9B-3476-48EA-A0B1-DBA96E6E283B
+[^5]: https://apex.oracle.com/pls/apex/apex_pm/r/ut/javascript-apis
