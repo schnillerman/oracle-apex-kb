@@ -57,6 +57,7 @@ This is a topic I found especially hard to deal with: I want to set a creation d
    ```
 #### Suppress Message After Modal Dialog Create
 The message can be styled (I didn't figure out how to suppress it completely) via a theme JS API.[^5]
+The code simply needs to be put into the events of the modal dialog page's source page, unter _Page Load_, as a _Dynamic Action_ the _Action Type_ of which should be _Execute JavaScript Code_.
 
 # Sources
 [^1]: https://forums.oracle.com/ords/apexds/post/how-to-open-modal-dialog-page-from-hyperlink-6555
