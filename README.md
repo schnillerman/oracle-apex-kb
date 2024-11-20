@@ -43,6 +43,18 @@ The column text is
   - **Target**: ```Page <x>```
   - **Link Text**: ```&EDIT_LINK.``` (see [^3] and [^4])
 
+#### Modal Dialog: Set Value Upon Dialog Closure
+This is a topic I found especially hard to deal with: I want to set a creation date in a table when the entry is actually created. Doing this with a table setting of column and default value, it somehow produced an empty cell. So I found the following solution:
+1. Go to modal page
+2. Create a process _before_ the standard modal form proceses _Process Form_ and _Close Dialog_ named, e.g., _Set Value_ of type _Execute Code_.
+3. Enter the following PL/SQL Code:
+   ```
+   :<ModalDialogVarName> := <required value>;
+   ```
+   I wanted to have a creation time, so, for modal dialog page 3 (P3_CREATED_ON refers to CREATED_ON on the source page and from there to the source table column of the same name):
+   ```
+   :P3_CREATED_ON := sysdate;
+   ```
 #### Suppress Message After Modal Dialog Create
 The message can be styled (I didn't figure out how to suppress it completely) via a theme JS API.[^5]
 
