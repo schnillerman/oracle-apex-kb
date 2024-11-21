@@ -45,7 +45,7 @@ This is a topic I found especially hard to deal with: I want to set a creation d
    ```
    :P3_CREATED_ON := sysdate;
    ```
-   If you want to execute SQL:
+   If you want to execute SQL:[^6]
    ```
    update <table name>
    set <column name> = <desired value>
@@ -61,3 +61,4 @@ The code simply needs to be put into the events of the modal dialog page's sourc
 [^3]: https://forums.oracle.com/ords/apexds/post/how-to-make-link-text-conditional-6681
 [^4]: https://docs.oracle.com/en/database/oracle/apex/24.1/htmdb/about-using-substitution-strings.html#GUID-C47D5D9B-3476-48EA-A0B1-DBA96E6E283B
 [^5]: https://apex.oracle.com/pls/apex/apex_pm/r/ut/javascript-apis
+[^6]: https://forums.oracle.com/ords/apexds/post/how-can-i-perform-an-sql-statement-insert-data-into-table-u-4869
