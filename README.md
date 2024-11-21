@@ -16,17 +16,7 @@ That's why it has to be done with a combination of SQL and a helper column that 
 ###### Report Page Body
 The SQL in the **report page** body selects the existing table data and creates the helper column ```EDIT_LINK```. The column is empty where the condition is not met, it contains the URL (via ```apex_page.get_url()```[^2]) and the icon (fa-edit) where the condition is met.
 ```
-select ID,
-       firstname,
-       lastname,
-       EMAIL,
-       cellphone,
-       phone,
-       ADDRESS_1_STR,
-       ADDRESS_2_ADD,
-       ADDRESS_3_PC,
-       ADDRESS_4_CITY,
-       OPEN_ID,
+select *,
        CASE lower(OPEN_ID)
          when lower(:APP_USER) THEN
             '<a href="'||apex_page.get_url(p_page => '3', p_items => 'p3_id', p_values => ID)||'"><span class="fa fa-edit"></span></a>'
@@ -46,14 +36,20 @@ The column text is
 #### Modal Dialog: Set Value Upon Dialog Closure
 This is a topic I found especially hard to deal with: I want to set a creation date in a table when the entry is actually created. Doing this with a table setting of column and default value, it somehow produced an empty cell. So I found the following solution:
 1. Go to modal page
-2. Create a process _before_ the standard modal form proceses _Process Form_ and _Close Dialog_ named, e.g., _Set Value_ of type _Execute Code_.
+2. Create a process in category _Processing_ named, e.g., _Set Value_ of type _Execute Code_. It should be put _after_ the standard modal form proceses _Process Form_.
 3. Enter the following PL/SQL Code:
    ```
-   :<ModalDialogVarName> := <required value>;
+   :<modal dialog var> := <desired value>;
    ```
    I wanted to have a creation time, so, for modal dialog page 3 (P3_CREATED_ON refers to CREATED_ON on the source page and from there to the source table column of the same name):
    ```
    :P3_CREATED_ON := sysdate;
+   ```
+   If you want to execute SQL:
+   ```
+   update <table name>
+   set <column name> = <desired value>
+   where <PK id variable name>= :<modal dialog ID variable name>;
    ```
 #### Suppress Message After Modal Dialog Create
 The message can be styled (I didn't figure out how to suppress it completely) via a theme JS API.[^5]
