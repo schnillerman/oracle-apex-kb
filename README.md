@@ -19,7 +19,7 @@ The SQL in the **report page** body selects the existing table data and creates 
 select *,
        CASE lower(OPEN_ID)
          when lower(:APP_USER) THEN
-            '<a href="'||apex_page.get_url(p_page => '<modal dialog page id', p_items => 'p<modal dialog page id>_id', p_values => ID)||'"><span class="fa fa-edit"></span></a>'
+            '<a href="'||apex_page.get_url(p_page => '<modal dialog page id>', p_items => 'p<modal dialog page id>_id', p_values => ID)||'"><span class="fa fa-edit"></span></a>'
         ELSE NULL
     END EDIT_LINK
   from <table name>
