@@ -64,6 +64,104 @@ This is a topic I found especially hard to deal with: I want to set a creation d
 The message can be styled (I didn't figure out how to suppress it completely) via a theme JS API.[^5]
 The code simply needs to be put into the events of the modal dialog page's source page, unter _Page Load_, as a _Dynamic Action_ the _Action Type_ of which should be _Execute JavaScript Code_.
 
+## Simple Auditing
+If you want to set up simple AUditing (created/updated information per row), the corresponding columns and a trigger need to be created per table.
+
+The following script (replace ```table_name```) was created by Deepseek:
+```
+-- Script for audit implementation with dynamic table name
+-- Usage in: APEX > SQL Workshop > SQL Scripts
+
+DECLARE
+  -- Get table name via substitution variable
+  v_table_name VARCHAR2(128) := UPPER(TRIM(':TABLE_NAME')); -- User will be prompted for input
+
+  -- Procedure to add audit columns
+  PROCEDURE add_audit_columns(p_table VARCHAR2) IS
+  BEGIN
+    htp.p('=== Adding audit columns to ' || p_table || ' ===');
+    
+    BEGIN
+      EXECUTE IMMEDIATE 'ALTER TABLE "' || p_table || '" ADD (
+        "CREATED" TIMESTAMP WITH TIME ZONE,
+        "CREATED_BY" VARCHAR2(255),
+        "UPDATED" TIMESTAMP WITH TIME ZONE,
+        "UPDATED_BY" VARCHAR2(255)
+      )';
+      htp.p('Audit columns added successfully');
+    EXCEPTION
+      WHEN OTHERS THEN
+        IF SQLCODE = -1430 THEN -- Column already exists
+          htp.p('Note: Audit columns already exist');
+        ELSE
+          htp.p('Error: ' || SQLERRM);
+          RAISE;
+        END IF;
+    END;
+  END;
+
+  -- Procedure to create the trigger
+  PROCEDURE create_audit_trigger(p_table VARCHAR2) IS
+    l_sql VARCHAR2(4000);
+  BEGIN
+    l_sql := '
+    CREATE OR REPLACE TRIGGER "' || p_table || '_TRG_AUDIT"
+    BEFORE INSERT OR UPDATE ON "' || p_table || '"
+    FOR EACH ROW
+    DECLARE
+      l_user VARCHAR2(255);
+    BEGIN
+      l_user := COALESCE(
+        SYS_CONTEXT(''APEX$SESSION'',''APP_USER''),
+        SYS_CONTEXT(''USERENV'',''SESSION_USER'')
+      );
+      IF INSERTING THEN
+        :NEW."CREATED" := SYSTIMESTAMP;
+        :NEW."CREATED_BY" := l_user;
+        :NEW."UPDATED" := SYSTIMESTAMP;
+        :NEW."UPDATED_BY" := l_user;
+      ELSIF UPDATING THEN
+        :NEW."UPDATED" := SYSTIMESTAMP;
+        :NEW."UPDATED_BY" := l_user;
+        :NEW."CREATED" := :OLD."CREATED";
+        :NEW."CREATED_BY" := :OLD."CREATED_BY";
+      END IF;
+    END;';
+    
+    EXECUTE IMMEDIATE l_sql;
+    htp.p('Trigger ' || p_table || '_TRG_AUDIT created successfully');
+  EXCEPTION
+    WHEN OTHERS THEN
+      htp.p('Trigger error: ' || SQLERRM);
+      RAISE;
+  END;
+
+BEGIN
+  -- Input validation
+  --IF v_table_name IS NULL OR v_table_name NOT LIKE 'SDV\_%' ESCAPE '\' THEN
+  --  htp.p('=== ERROR: Invalid table name! Must start with "SDV_". ===');
+  --  RETURN;
+  --END IF;
+
+  -- Main processing
+  add_audit_columns(v_table_name);
+  create_audit_trigger(v_table_name);
+  
+  COMMIT;
+  htp.p('=== SUCCESS: Audit logic implemented for ' || v_table_name || ' ===');
+EXCEPTION
+  WHEN OTHERS THEN
+    ROLLBACK;
+    htp.p('=== ERROR: ' || SQLERRM || ' ===');
+END;
+/
+```
+Additionally, the following resources can be consulted:
+- [Methods on Tables to include audit functionality on a table](https://apex.oracle.com/ideas/FR-3247)
+- [How to Pass APP_USER to a database trigger for auditing](https://forums.oracle.com/ords/apexds/post/how-to-pass-app-user-to-a-database-trigger-for-auditing-2402)
+- [APEX Modified date Column update](https://forums.oracle.com/ords/apexds/post/apex-modified-date-column-update-7327)
+- [CREATED_ON column using Source: Automatic Row Processing (DML)](https://forums.oracle.com/ords/apexds/post/created-on-column-using-source-automatic-row-processing-dml-4696)
+
 # Sources
 [^1]: https://forums.oracle.com/ords/apexds/post/how-to-open-modal-dialog-page-from-hyperlink-6555
 [^2]: https://docs.oracle.com/en/database/oracle/apex/22.1/aeapi/GET_URL-Function.html
