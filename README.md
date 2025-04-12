@@ -9,6 +9,7 @@ These are all "hacks" that I have spent countless of hours on realizing because 
     - https://www.youtube.com/watch?v=7C8dUZeKsE0
     - https://forums.oracle.com/ords/apexds/post/how-to-log-in-with-user-credentials-from-database-table-6626
     - https://www.google.com/search?client=firefox-b-d&q=oracle+apex+user+authentication+by+table
+    - [Keycloak Admin REST API - Users](https://www.keycloak.org/docs-api/latest/rest-api/index.html#_users) - see POST action
 ## Report Pages
 ### Interactive Reports (IR)
 #### Conditional Edit Column
